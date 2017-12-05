@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chatView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/chatbg"
+    tools:context="com.mmq.chattest.MainActivity">
+
+    <ProgressBar
+        android:id="@+id/progressBarMsg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/ChatInput"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/chat_input"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/imgEmoticon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/btnSend"
+            android:background="@drawable/ic_insert_emoticon_black_24dp"
+            android:gravity="center"
+            android:padding="5dp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="521dp" />
+
+        <EditText
+            android:id="@+id/edtMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignBaseline="@+id/btnSend"
+            android:layout_alignBottom="@+id/btnSend"
+            android:layout_toEndOf="@+id/imgEmoticon"
+            android:layout_toStartOf="@+id/btnSend"
+            android:background="@android:color/transparent"
+            android:ems="9"
+            android:hint="Enter message..."
+            android:imeOptions="flagNoFullscreen"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/ic_send_black_24dp"
+            android:gravity="center"
+            android:padding="5dp" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/chatRoom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/ChatInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </android.support.v7.widget.RecyclerView>
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/imageViewAvatar"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="left"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/avatar" />
+
+    <TextView
+        android:id="@+id/itemSender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="sender:"
+        android:textSize="16dp"
+        android:layout_marginLeft="5dp"
+        android:layout_alignParentTop="true"
+        android:textColor="#FFF"
+        android:layout_alignStart="@+id/itemMessage" />
+
+    <TextView
+        android:id="@+id/itemMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="5dp"
+        android:padding="9dp"
+        android:background="@drawable/textview"
+        android:text="Hello world!"
+        android:textSize="16dp"
+        android:textColor="#000"
+        android:layout_below="@+id/itemSender"
+        android:layout_toEndOf="@+id/imageViewAvatar" />
+</RelativeLayout>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <!-- Email Label -->
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/regEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:text="" />
+    </android.support.design.widget.TextInputLayout>
+
+    <!-- Nickname Label -->
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/regName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="Display name"
+            android:inputType="textEmailAddress"
+            android:text="" />
+    </android.support.design.widget.TextInputLayout>
+
+    <!-- Password Label -->
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/regPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword" />
+    </android.support.design.widget.TextInputLayout>
+
+    <RadioGroup
+        android:id="@+id/radioGender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioRegMale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Male"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radioRegFemale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:text="Female"
+            android:textSize="18sp" />
+    </RadioGroup>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/buttonReg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:padding="12dp"
+        android:theme="@style/AppTheme.Button"
+        android:textColor="@color/White"
+        android:text="Register"/>
+
+</LinearLayout>
