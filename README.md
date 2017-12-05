@@ -4,7 +4,7 @@ Available features:
 - Only one public chat room only
 - Register and manage user profile:
     > Avatar editting: Only URL (image upload is still not available).
-    > Profile update.
+     - Profile update.
 
 To be updated features:
 - Refactor codes.
