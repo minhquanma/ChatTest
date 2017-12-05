@@ -7,5 +7,5 @@ Available features:
     - Profile update.
 
 To be updated features:
-- Refactor codes.
+- Refactoring codes.
 - Insert (overriding system default emoji) using https://github.com/vanniktech/Emoji.
