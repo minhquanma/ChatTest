@@ -16,7 +16,7 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:src="@drawable/hutech" />
 
         <!-- Email Label -->
@@ -55,7 +55,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:padding="12dp"
             android:theme="@style/AppTheme.Button"
             android:textColor="@color/White"
@@ -65,11 +65,12 @@
             android:id="@+id/linkSignup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:gravity="center"
             android:text="Click here to create new account"
             android:textSize="16dip"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:padding="5dp"
+            android:paddingBottom="10dp"/>
 
     </LinearLayout>
 </ScrollView>
