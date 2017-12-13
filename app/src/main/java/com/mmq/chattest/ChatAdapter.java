@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiTextView;
 
 import java.util.List;
 
@@ -124,7 +126,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public static class ChatLeftViewHolder extends RecyclerView.ViewHolder {
 
         public TextView itemSender;
-        public TextView itemMessage;
+        public EmojiTextView itemMessage;
         public ImageView imageAvatar;
 
         public ChatLeftViewHolder(final View itemView) {
@@ -138,7 +140,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public static class ChatRightViewHolder extends RecyclerView.ViewHolder {
 
         public TextView itemSender;
-        public TextView itemMessage;
+        public EmojiTextView itemMessage;
         public ImageView imageAvatar;
 
         public ChatRightViewHolder(final View itemView) {

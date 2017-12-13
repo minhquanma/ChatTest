@@ -3,6 +3,7 @@ package com.mmq.chattest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.Image;
 import android.os.*;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,16 +26,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiManager;
+import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
+import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
+import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     // Widgets
+    private View chatView;
     private Button btnSend;
-    private EditText edtMessage;
+    private EmojiEditText edtMessage;
     private RecyclerView recyclerView;
+    private ImageView imgEmoticon;
     private ProgressDialog progressDialog;
+
+    private EmojiPopup emojiPopup;
 
     // Firebase
     private ValueEventListener getCurrentUEventLisnter;
@@ -43,13 +54,34 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Install Emoji on Create
+        EmojiManager.install(new TwitterEmojiProvider());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Widgets mapping
+        chatView = findViewById(R.id.chatView);
         btnSend = findViewById(R.id.btnSend);
         edtMessage = findViewById(R.id.edtMsg);
         recyclerView = findViewById(R.id.chatRoom);
+        imgEmoticon = findViewById(R.id.imgEmoticon);
+
+        // Emoji inits
+        EmojiPopup.Builder builder = EmojiPopup.Builder.fromRootView(chatView);
+        builder.setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
+            @Override
+            public void onEmojiPopupDismiss() {
+                imgEmoticon.setBackgroundResource(R.drawable.ic_insert_emoticon_black_24dp);
+            }
+        }).setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
+            @Override
+            public void onEmojiPopupShown() {
+                imgEmoticon.setBackgroundResource(R.drawable.ic_keyboard_black_24dp);
+            }
+        });
+        emojiPopup = builder.build(edtMessage);
 
         // Nếu user chưa đăng nhập thì chuyển sang màn hình Login
         if (FirebaseAuth.getInstance().getCurrentUser() == null)
@@ -58,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(login);
         }
 
-        // Hien progress dialog load du lieu
+        // Hiện progress dialog load dữ liệu
         progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Loading data", true);
 
         // Lấy Uid của user hiện tại.
@@ -105,6 +137,19 @@ public class MainActivity extends AppCompatActivity {
                 if (!edtMessage.getText().toString().isEmpty()) {
                     API.addMessage(currentLoggedInUser, edtMessage.getText().toString());
                     edtMessage.setText("");
+                }
+            }
+        });
+
+        // Emoticon
+        imgEmoticon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (emojiPopup.isShowing()) {
+                    emojiPopup.dismiss();
+                }
+                else {
+                    emojiPopup.toggle();
                 }
             }
         });

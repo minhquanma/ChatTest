@@ -65,6 +65,7 @@ public class API {
                     .load(user.getAvatar())
                     .into(imgViewDlgProfile);
         }
+
         txtViewDlgEmail.setText(user.getAccount());
         txtViewDlgGender.setText("Gender: " + user.stringGender());
 
