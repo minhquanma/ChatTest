@@ -8,11 +8,12 @@ import java.io.Serializable;
 
 public class Users implements Serializable {
 
-    String uid;
-    String account;
-    String displayName;
-    String avatar;
-    boolean gender;
+    private String uid;
+    private String account;
+    private String displayName;
+    private String avatar;
+    private String birthday;
+    private boolean gender;
 
     public Users() {
     }
@@ -55,6 +56,14 @@ public class Users implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
     public boolean isGender() {

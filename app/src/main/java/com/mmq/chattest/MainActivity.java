@@ -3,7 +3,6 @@ package com.mmq.chattest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.media.Image;
 import android.os.*;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,19 +12,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
@@ -49,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Firebase
     private ValueEventListener getCurrentUEventLisnter;
-
-    Users currentLoggedInUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Loading data", true);
 
         // Lấy Uid của user hiện tại.
-        API.currentUid = API.firebaseAuth.getCurrentUser().getUid();
+        API.currentUID = API.firebaseAuth.getCurrentUser().getUid();
 
         // EventListener với chức năng lấy Display Name của user hiện tại.
         getCurrentUEventLisnter = new ValueEventListener() {
@@ -102,15 +94,15 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
                     // Lấy thông tin user đã log in gán vào biến
-                    currentLoggedInUser = dataSnapshot.getValue(Users.class);
+                    API.currentUser = dataSnapshot.getValue(Users.class);
 
-                    setTitle(currentLoggedInUser.getDisplayName());
+                    setTitle(API.currentUser.getDisplayName());
 
                     // Lay cac tin nhan tu firebase
                     loadMessagesFromFirebase();
 
                     // Hủy đăng ký sự kiện khi đã lấy được thông tin Display name của User hiện tại.
-                    API.firebaseRef.child("USERS").child(API.currentUid).removeEventListener(getCurrentUEventLisnter);
+                    API.firebaseRef.child("USERS").child(API.currentUID).removeEventListener(getCurrentUEventLisnter);
                     progressDialog.dismiss();
                 }
                 catch (java.lang.NullPointerException ex) {
@@ -128,14 +120,14 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // Đăng ký sự kiện để lấy thông tin của user hiện tại trên firebase
-        API.firebaseRef.child("USERS").child(API.currentUid).addListenerForSingleValueEvent(getCurrentUEventLisnter);
+        API.firebaseRef.child("USERS").child(API.currentUID).addListenerForSingleValueEvent(getCurrentUEventLisnter);
 
         // Button khi click thì gửi tin nhắn mới lên firebase
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!edtMessage.getText().toString().isEmpty()) {
-                    API.addMessage(currentLoggedInUser, edtMessage.getText().toString());
+                    API.addMessage(API.currentUser, edtMessage.getText().toString());
                     edtMessage.setText("");
                 }
             }
@@ -169,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     Messages msg = db.getValue(Messages.class);
 
                     // Neu message nay la cua toi
-                    if (msg.getUid().toLowerCase().contains(currentLoggedInUser.getUid().toLowerCase())) {
+                    if (msg.getUid().toLowerCase().contains(API.currentUser.getUid().toLowerCase())) {
                         msg.setMe(true);
                     }
                     else {
@@ -208,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) {
             if (resultCode == Activity.RESULT_OK) {
-                API.firebaseRef.child("USERS").child(API.currentUid).addListenerForSingleValueEvent(getCurrentUEventLisnter);
+                API.firebaseRef.child("USERS").child(API.currentUID).addListenerForSingleValueEvent(getCurrentUEventLisnter);
             }
         }
     }
@@ -231,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.m_profile:
                 Intent profile = new Intent(MainActivity.this, ProfileActivity.class);
-                profile.putExtra("PROFILE", currentLoggedInUser);
+                profile.putExtra("PROFILE", API.currentUser);
                 startActivityForResult(profile, 0);
                 break;
 

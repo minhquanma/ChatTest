@@ -21,9 +21,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="sender:"
-        android:textSize="16dp"
-        android:layout_marginRight="6dp"
-        android:textColor="#FFF"
+        android:textSize="13dp"
+        android:layout_marginRight="8dp"
+        android:textColor="#757575"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/imageViewAvatar" />
 
@@ -36,7 +36,7 @@
         android:padding="10dp"
         android:background="@drawable/textview_me"
         android:text="Hello world!"
-        android:textSize="16dp"
+        android:textSize="17dp"
         android:textColor="#fff"
         android:layout_below="@+id/itemSender"
         android:layout_toStartOf="@+id/imageViewAvatar" />

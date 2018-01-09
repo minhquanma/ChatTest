@@ -8,10 +8,10 @@
     android:padding="6dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgViewDlgProfile"
+        android:id="@+id/imgViewProfile"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_margin="10dp"
+        android:layout_margin="0dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/avatar"
         app:civ_border_color="@color/colorAccent"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtViewDlgEmail"
+        android:id="@+id/txtViewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -34,11 +34,11 @@
         android:textAllCaps="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgViewDlgProfile" />
+        app:layout_constraintTop_toBottomOf="@+id/imgViewProfile" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/inputDisplayName"
-        app:layout_constraintTop_toBottomOf="@+id/txtViewDlgEmail"
+        app:layout_constraintTop_toBottomOf="@+id/txtViewName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
@@ -57,8 +57,8 @@
             android:enabled="false"/>
     </android.support.design.widget.TextInputLayout>
 
+
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/inputPassword"
         app:layout_constraintTop_toBottomOf="@+id/inputDisplayName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -68,54 +68,26 @@
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/inputPasswordR"
-        app:layout_constraintTop_toBottomOf="@+id/inputPassword"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        app:layout_constraintTop_toBottomOf="@+id/inputPasswordR"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:id="@+id/textInputLayout">
+        android:id="@+id/inputBirthday">
 
         <EditText
-            android:id="@+id/edtAvatar"
+            android:id="@+id/edtBirthday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:hint="Avatar URL" />
+            android:hint="Birthday"
+            android:text="dd/MM/yyyy" />
     </android.support.design.widget.TextInputLayout>
 
     <RadioGroup
         android:id="@+id/radioProfileGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:padding="10dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/inputBirthday"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
@@ -141,37 +113,51 @@
     </RadioGroup>
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:orientation="horizontal"
+        android:weightSum="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:weightSum="2">
+        app:layout_constraintRight_toRightOf="parent">
 
         <android.support.v7.widget.AppCompatButton
-            android:layout_weight="1"
             android:id="@+id/buttonSaveProfile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Save"
+            android:layout_weight="1"
             android:enabled="false"
+            android:padding="15dp"
+            android:text="Save"
             android:textColor="@color/White"
             android:theme="@style/AppTheme.ButtonGreen" />
 
         <android.support.v7.widget.AppCompatButton
-            android:layout_weight="1"
             android:id="@+id/buttonCancelProfile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:layout_weight="1"
+            android:padding="15dp"
             android:text="Cancel"
             android:textColor="@color/White"
             android:theme="@style/AppTheme.Button" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/txtViewPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:paddingBottom="10dp"
+        android:text="Change your password"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioProfileGroup" />
 
 
 </android.support.constraint.ConstraintLayout>

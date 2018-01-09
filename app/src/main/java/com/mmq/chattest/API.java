@@ -16,6 +16,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -27,8 +29,11 @@ public class API {
     // Firebase
     public static DatabaseReference firebaseRef = FirebaseDatabase.getInstance().getReference();
     public static FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    public static String currentUid;
-    public static Users currentUser = new Users();
+    public static StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference();
+
+    // Users
+    public static Users currentUser;
+    public static String currentUID;
     private static ProgressDialog progressDialog;
 
     public static void addMessage(Users currentUser, String message) {
@@ -55,8 +60,8 @@ public class API {
         AlertDialog.Builder aBuilder = new AlertDialog.Builder(context);
         final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_profile, null);
 
-        ImageView imgViewDlgProfile = dialogView.findViewById(R.id.imgViewDlgProfile);
-        TextView txtViewDlgEmail = dialogView.findViewById(R.id.txtViewDlgEmail);
+        ImageView imgViewDlgProfile = dialogView.findViewById(R.id.imgViewProfile);
+        TextView txtViewDlgEmail = dialogView.findViewById(R.id.txtViewName);
         TextView txtViewDlgGender = dialogView.findViewById(R.id.txtViewDlgGender);
 
         // Load thong tin

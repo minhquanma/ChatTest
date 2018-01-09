@@ -3,6 +3,9 @@ package com.mmq.chattest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,42 +20,43 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private ImageView imgViewDlgProfile;
-    private TextView txtViewProfile;
+    private ImageView imgViewProfile;
+    private TextView txtViewName;
     private EditText edtDisplayName;
-    private EditText edtAvatar;
+    private EditText edtBirthday;
     private Button buttonSaveProfile;
     private Button buttonCancelProfile;
-    private Menu menu;
+    private Menu editingButton;
     private Users user;
     private ProgressDialog progressDialog;
     private RadioGroup radioProfileGroup;
     private RadioButton radioMale;
     private RadioButton radioFemale;
+    private TextView txtViewPassword;
 
     // Firebase
-    DatabaseReference firebaseRef;
-    FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    ValueEventListener updateDataEventListener;
+    private ValueEventListener updateDataEventListener;
 
-    boolean edittingFlag = false;
+    private boolean editingFlag = false;
+    private final int REQUEST_CODE = 1;
+    private Uri selectedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,23 +64,22 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         // Mapping
-        imgViewDlgProfile = findViewById(R.id.imgViewDlgProfile);
-        txtViewProfile = findViewById(R.id.txtViewDlgEmail);
+        imgViewProfile = findViewById(R.id.imgViewProfile);
+        txtViewName = findViewById(R.id.txtViewName);
         edtDisplayName = findViewById(R.id.edtDisplayName);
-        edtAvatar = findViewById(R.id.edtAvatar);
+        edtBirthday = findViewById(R.id.edtBirthday);
         buttonSaveProfile = findViewById(R.id.buttonSaveProfile);
         buttonCancelProfile = findViewById(R.id.buttonCancelProfile);
         radioMale = findViewById(R.id.radioMale);
         radioFemale = findViewById(R.id.radioFemale);
         radioProfileGroup = findViewById(R.id.radioProfileGroup);
+        txtViewPassword = findViewById(R.id.txtViewPassword);
 
-        // Firebase.
-        database = FirebaseDatabase.getInstance();
-        firebaseRef = database.getReference();
-        firebaseAuth = FirebaseAuth.getInstance();
+        // Lấy extra.
+        Intent intent = getIntent();
+        user = (Users)intent.getExtras().getSerializable("PROFILE");
 
-        // Get the student extra.
-        loadUserProfile();
+        loadUserProfile(user);
 
         buttonCancelProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,73 +90,128 @@ public class ProfileActivity extends AppCompatActivity {
         buttonSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Hien dialog
-                progressDialog = ProgressDialog.show(ProfileActivity.this, "Please wait...", "Applying new data", true);
+                progressDialog = ProgressDialog.show(ProfileActivity.this, null, "Updating profile...", true);
+                // Lấy thông tin người đã cập nhật.
+                final Map updatedUser = getMapUpdatedUserProfile();
 
-                // Thuc hien cap nhat profile
-                firebaseRef.child("USERS").child(user.getUid()).setValue(getUpdatedUser()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Khi thanh cong thi update du lieu tin nhan
-                        updateMessagesData(getUpdatedUser());
-                    }
-                });
+                // Up ảnh lên server.
+                if (selectedImage != null) {
+                    API.firebaseStorage.child("USERS/" + API.currentUID + ".avatar")
+                            .putFile(selectedImage)
+                            .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                    // Lấy link ảnh đã upload.
+                                    String avatarURL = task.getResult().getDownloadUrl().toString();
+
+                                    // Gán vào đối tượng.
+                                    updatedUser.put("avatar", avatarURL);
+
+                                    // Update lên database.
+                                    API.firebaseRef.child("USERS")
+                                            .child(API.currentUser.getUid())
+                                            .updateChildren(updatedUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(ProfileActivity.this, "Profile updated successful!", Toast.LENGTH_SHORT).show();
+
+                                            // Cập nhật giao diện.
+                                            loadUserProfile(getUpdatedUserProfile());
+
+                                            // Cập nhật lại thông tin tin nhắn.
+                                            updateMessagesData(getUpdatedUserProfile());
+                                        }
+                                    });
+                                }
+                            });
+                } else {
+                    // Nếu không chọn up ảnh thì chỉ update thông tin cơ bản thôi.
+                    API.firebaseRef.child("USERS")
+                            .child(API.currentUser.getUid())
+                            .updateChildren(updatedUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileActivity.this, "Profile updated successful!", Toast.LENGTH_SHORT).show();
+
+                            // Cập nhật giao diện.
+                            loadUserProfile(getUpdatedUserProfile());
+
+                            // Cập nhật lại thông tin tin nhắn.
+                            updateMessagesData(getUpdatedUserProfile());
+                        }
+                    });
+                }
+            }
+        });
+
+        imgViewProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select image"), REQUEST_CODE);
             }
         });
     }
 
-    // Ham cap nhat thong tin cac message tren Firebase
     public void updateMessagesData(final Users user) {
-
-        // Tao mot EventListener moi
         updateDataEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot db : dataSnapshot.getChildren()) {
 
-                    // Lay ve tung doi tuong message
+                    // Lấy về từng message.
                     Messages msg = db.getValue(Messages.class);
 
-                    // Kiem tra tung message tren firebase, neu trung uid voi user thi update ten moi
-                    if (msg.getUid().toLowerCase().contains(user.getUid().toLowerCase())) {
+                    // Kiểm tra từng message, nếu trùng uid với user thì update thông tin.
+                    if (msg.getUid().toLowerCase().contains(API.currentUser.getUid().toLowerCase())) {
                         Map<String, Object> map = new HashMap<String, Object>();
-                        map.put("sender", user.getDisplayName());
-                        map.put("avatar", user.getAvatar());
-                        firebaseRef.child("MESSAGES").child(db.getKey()).updateChildren(map);
+                        map.put("sender", API.currentUser.getDisplayName());
+                        map.put("avatar", API.currentUser.getAvatar());
+                        API.firebaseRef.child("MESSAGES").child(db.getKey()).updateChildren(map);
                     }
                 }
 
-                // Huy dang ky su kien sau khi update xong
-                firebaseRef.child("MESSAGES").removeEventListener(updateDataEventListener);
+                // Hủy đăng kí sự kiện sau khi update xong.
+                API.firebaseRef.child("MESSAGES").removeEventListener(updateDataEventListener);
 
-                // Tat dialog
                 progressDialog.dismiss();
 
-                // Update xong thi tat activity
+                // Update xong thì tắt activity.
                 Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
-                intent.putExtra("PROFILE", getUpdatedUser());
+                intent.putExtra("PROFILE", getUpdatedUserProfile());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Neu bi loi thi huy dang ky su kien
-                firebaseRef.child("MESSAGES").removeEventListener(updateDataEventListener);
+                API.firebaseRef.child("MESSAGES").removeEventListener(updateDataEventListener);
             }
         };
 
-        // Thuc hien refresh du lieu
-        firebaseRef.child("MESSAGES").addValueEventListener(updateDataEventListener);
+        // Thực hiện refresh dữ liệu
+        API.firebaseRef.child("MESSAGES").addValueEventListener(updateDataEventListener);
+    }
+    public Map<String, Object> getMapUpdatedUserProfile() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("displayName", edtDisplayName.getText().toString());
+        map.put("birthday", edtBirthday.getText().toString());
+
+        if (radioProfileGroup.getCheckedRadioButtonId() == radioMale.getId())
+            map.put("gender", true);
+        else
+            map.put("gender", false);
+        return map;
     }
 
-    // Ham lay thong tin moi tu cac widgets
-    public Users getUpdatedUser() {
+    public Users getUpdatedUserProfile() {
         Users profile = new Users();
-        profile.setUid(user.getUid());
         profile.setDisplayName(edtDisplayName.getText().toString());
         profile.setAccount(user.getAccount());
-        profile.setAvatar(edtAvatar.getText().toString());
 
         if (radioProfileGroup.getCheckedRadioButtonId() == radioMale.getId())
             profile.setGender(true);
@@ -162,34 +220,29 @@ public class ProfileActivity extends AppCompatActivity {
         return profile;
     }
 
-    // Load thong tin user vao widgets
-    public void loadUserProfile()
+    public void loadUserProfile(Users user)
     {
-        // Lay extras
-        Intent intent = getIntent();
-        user = (Users)intent.getExtras().getSerializable("PROFILE");
-
         setTitle(user.getAccount());
 
         // Load avatar
         if (URLUtil.isValidUrl(user.getAvatar()))
         Picasso.with(this)
                 .load(user.getAvatar())
-                .into(imgViewDlgProfile);
+                .into(imgViewProfile);
 
         if (user.isGender())
             radioMale.setChecked(true);
         else
             radioFemale.setChecked(true);
 
-        txtViewProfile.setText(user.getDisplayName());
+        txtViewName.setText(user.getDisplayName());
         edtDisplayName.setText(user.getDisplayName());
-        edtAvatar.setText(user.getAvatar());
+        edtBirthday.setText(user.getBirthday());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
+        this.editingButton = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.profile_menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -199,25 +252,48 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.m_edit_profile:
-                if (edittingFlag == false) {
-                    menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_cancel_black_24dp));
-                    edittingFlag = true;
+                if (editingFlag == false) {
+                    editingButton.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_cancel_black_24dp));
+                    editingFlag = true;
                     edtDisplayName.setEnabled(true);
-                    edtAvatar.setEnabled(true);
+                    edtBirthday.setEnabled(true);
                     radioMale.setEnabled(true);
                     radioFemale.setEnabled(true);
+                    txtViewPassword.setEnabled(true);
                     buttonSaveProfile.setEnabled(true);
                 } else {
-                    menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_edit_black_24dp));
-                    edittingFlag = false;
+                    editingButton.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_edit_black_24dp));
+                    editingFlag = false;
                     edtDisplayName.setEnabled(false);
-                    edtAvatar.setEnabled(false);
+                    edtBirthday.setEnabled(false);
                     radioMale.setEnabled(false);
                     radioFemale.setEnabled(false);
+                    txtViewPassword.setEnabled(false);
                     buttonSaveProfile.setEnabled(false);
                 }
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE
+                && resultCode == RESULT_OK
+                && data != null
+                && data.getData() != null) {
+
+            selectedImage = data.getData();
+
+            try {
+                Bitmap bitMap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                imgViewProfile.setImageBitmap(bitMap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
