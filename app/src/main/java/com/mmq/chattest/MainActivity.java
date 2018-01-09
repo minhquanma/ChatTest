@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.VariantEmoji;
 import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Install Emoji on Create
+        // Install Emoji on Create first
         EmojiManager.install(new TwitterEmojiProvider());
 
         super.onCreate(savedInstanceState);

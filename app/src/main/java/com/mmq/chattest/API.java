@@ -44,7 +44,7 @@ public class API {
         firebaseRef.child("MESSAGES").child(newKey)
                 .setValue(new Messages(currentUser.getUid(), newKey, currentUser.getDisplayName(),
                         message,
-                        currentUser.avatar));
+                        currentUser.getAvatar()));
     }
 
     // Ham xoa tin nhan
